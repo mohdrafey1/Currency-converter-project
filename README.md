@@ -1,2 +1,2 @@
 # project 2
-created a currency conversion , my second project.
+Created a Currency Conversion , My Second mini project.
