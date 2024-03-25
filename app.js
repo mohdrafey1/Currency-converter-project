@@ -1,11 +1,13 @@
 const BASE_URL =
-    'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
+    'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies';
 
 const dropdowns = document.querySelectorAll('.dropdown select');
 const btn = document.querySelector('form button');
 const fromCurr = document.querySelector('.from select');
 const toCurr = document.querySelector('.to select');
 const msg = document.querySelector('.msg');
+const swap = document.querySelector('.swap');
+const ratemsg = document.querySelector('.ratemsg');
 
 for (let select of dropdowns) {
     for (currCode in countryList) {
@@ -32,10 +34,13 @@ const updateExchangeRate = async () => {
         amtVal = 1;
         amount.value = '1';
     }
-    const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}/${toCurr.value.toLowerCase()}.json`;
+    const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.json`;
     let response = await fetch(URL);
     let data = await response.json();
-    let rate = data[toCurr.value.toLowerCase()];
+
+    let rate = data[fromCurr.value.toLowerCase()][toCurr.value.toLowerCase()];
+
+    ratemsg.innerText = `Current Rate: 1 ${fromCurr.value} = ${rate} ${toCurr.value}`;
 
     let finalAmount = amtVal * rate;
     msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
@@ -52,6 +57,29 @@ const updateFlag = (element) => {
 btn.addEventListener('click', (evt) => {
     evt.preventDefault();
     updateExchangeRate();
+});
+
+const swapping = () => {
+    // Select the elements with class names 'fromCurr' and 'toCurr'
+    const fromCurrElement = fromCurr;
+    const toCurrElement = toCurr;
+
+    // Ensure both elements are found
+    if (fromCurrElement && toCurrElement) {
+        // Swap their values
+        const temp = fromCurrElement.value;
+        fromCurrElement.value = toCurrElement.value;
+        toCurrElement.value = temp;
+    }
+    updateFlag(fromCurrElement);
+    updateFlag(toCurrElement);
+
+    updateExchangeRate();
+};
+
+// Add event listener to trigger swapping function on click
+swap.addEventListener('click', () => {
+    swapping();
 });
 
 window.addEventListener('load', () => {
